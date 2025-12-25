@@ -15,7 +15,9 @@
  *  CMax WWVB routines                                                      *
  *                                                                          *
  ****************************************************************************/
-#include <htc.h>
+#define _XTAL_FREQ 4000000L
+#include <xc.h>
+//#include <htc.h>
 #include "types.h"
 #include "main.h"
 #include "rtc.h"
@@ -642,7 +644,7 @@ static UINT8 wwvGetAnyBit(void)
 
 
 /****************************************************************************
- * UINT8 wwvGetWeekDay(UINT8 yMonth, UINT8 yDate)                           *
+ * UINT8 wwvGetWeekDay(int nMonth, int nDate, int nYear)                    *
  *                                                                          *
  * DESCRIPTION                                                              *
  * Returns the day of week for the given month and date.                    *

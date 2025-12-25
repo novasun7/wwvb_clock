@@ -15,7 +15,10 @@
  *  High level lcd graphics routines                                        *
  *                                                                          *
  ****************************************************************************/
-#include <htc.h>
+#define _XTAL_FREQ 4000000L
+
+#include <xc.h>
+//#include <htc.h>
 #include "types.h"
 #include "glcd.h"
 #include "bitmaps.h"

@@ -7,7 +7,8 @@
 #ifndef __glcd__H__
 #define __glcd__H__
 
-#include <htc.h>
+#include <xc.h>
+//#include <htc.h>
 #include "types.h"
 
 

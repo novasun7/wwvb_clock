@@ -16,8 +16,9 @@
  *                                                                          *
  *                                                                          *
  ****************************************************************************/
-#include <htc.h>
-#include "delay.h"
+#define _XTAL_FREQ 4000000L
+//#include <htc.h>
+//#include "delay.h"
 #include "glcd.h"
 
 

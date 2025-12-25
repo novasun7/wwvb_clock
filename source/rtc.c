@@ -16,7 +16,9 @@
  *  DS1302 clock chip functions                                             *
  *                                                                          *
  ****************************************************************************/
-#include <htc.h>
+#define _XTAL_FREQ 4000000L
+#include <xc.h>
+//#include <htc.h>
 #include "types.h"
 #include "rtc.h"
 #include "spi.h"

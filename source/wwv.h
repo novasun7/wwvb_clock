@@ -24,9 +24,9 @@ extern void wwvInit(void);
 extern UINT8 wwvGetTime(TIMESTRUCT *pt);
 
 // Port and Pins definitions
-#define PIN_TCO     RA2             // CMax input pin
-#define PIN_TLED    LATA0           // LED
-#define PIN_SWITCH  RB2             // Input Switch
+#define PIN_TCO     PORTAbits.RA2             // CMax input pin
+#define PIN_TLED    LATAbits.LATA0           // LED
+#define PIN_SWITCH  PORTBbits.RB2             // Input Switch
 
 #define SWITCH_UP   (PIN_SWITCH)
 #define SWITCH_DOWN (!PIN_SWITCH)

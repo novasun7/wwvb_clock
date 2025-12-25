@@ -7,7 +7,8 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-#include <htc.h>
+#include <xc.h>
+//#include <htc.h>
 #include "types.h"
 #include "rtc.h"
 
@@ -22,6 +23,7 @@
 extern volatile UINT16 g_wFrameCounter;                 // 750ms counter
 extern volatile  UINT8 g_yTimedOut;                     // 1=A time out occured
 
+extern void Vdelay_ms(UINT16 wDelay);
 extern void DelayShort(void);
 
 #endif /* __MAIN_H__ */
