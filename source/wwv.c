@@ -35,8 +35,8 @@ static UINT8 wwvRead8BitFrame(UINT8 *pResult);
 static UINT8 wwvGetAnyBit(void);
 static UINT8 wwvBCDToDec(UINT8 yNum);
 static UINT8 wwvDecToBCD(UINT8 yNum);
-static UINT8 wwvGetWeekDay(int nMonth, int nDate, int nYear);
-static void glcdMakeLastSyncString(UINT8 *pBuffer, UINT8 yMonth, UINT8 yDate,
+static UINT8 wwvGetWeekDay(UINT16 nMonth, UINT16 nDate, UINT16 nYear);
+static void glcdMakeLastSyncString(char *pBuffer, UINT8 yMonth, UINT8 yDate,
                                 UINT8 yHour, UINT8 yMin);
 
 
@@ -132,12 +132,12 @@ UINT8 wwvGetTime(TIMESTRUCT *pt)
     UINT8   y, yUpper, yLower;
     UINT8   yMin, yHour, yDays1, yDays2, yYears1, yYears2, yLeap, yDST, yTZ;
     UINT16  wDays;
-    UINT8   sz[16];
+    char    sz[16];
 
     // Display last sync up time
     glcdClearScreen();
     glcdMoveTo(0, 0);
-    glcdWriteString((UINT8*) cszLastSync);      // display last sync
+    glcdWriteString((char*) cszLastSync);       // display last sync
 
     glcdMakeLastSyncString(sz, rtcReadRam(RAM_R_LASTMONTH2), rtcReadRam(RAM_R_LASTDATE2),
                             rtcReadRam(RAM_R_LASTHOUR2), rtcReadRam(RAM_R_LASTMIN2) );
@@ -152,7 +152,7 @@ UINT8 wwvGetTime(TIMESTRUCT *pt)
     glcdWriteString(sz);                    // display it
 
     glcdMoveTo(0, 4);
-    glcdWriteString((UINT8*) cszSync);      // display sync up message
+    glcdWriteString((char*) cszSync);       // display sync up message
     glcdMoveTo(0, 5);
 
     wwvStartFrameTimer();                   // start the fail-safe timer
@@ -287,7 +287,7 @@ UINT8 wwvGetTime(TIMESTRUCT *pt)
         return 0;                           // must be less than 366 days
 
     // Convert years
-    yUpper = yYears1 << 4;                  // move to msb
+    yUpper = (UINT8)(yYears1 << 4);         // move to msb
     yLower = yYears2  >> 4;
     y = rtcBCDToDec(yUpper | yLower);       // combine
     yYears1 = rtcBCDToDec(y);
@@ -309,7 +309,7 @@ UINT8 wwvGetTime(TIMESTRUCT *pt)
 // else
 // yDST = 0;
         
-    y = ((yYears2 & 0x01) << 1) | yDST;
+    y = (UINT8)(((yYears2 & 0x01) << 1) | yDST);
     if((y == 2) || (y == 3))
         yDST = 1;
     else
@@ -362,7 +362,7 @@ static void wwvMakeTimeStruct(TIMESTRUCT *pt, UINT8 yMin, UINT8 yHour,
         UINT16 wDays, UINT8 yYears, UINT8 yLeap, UINT8 yDST, UINT8 yTZ)
 {
     UINT16 nEndMonth, wDD;
-    long lTime;
+    //long lTime;
 
 
     // Convert UTC to match Time Zone
@@ -417,16 +417,13 @@ static void wwvMakeTimeStruct(TIMESTRUCT *pt, UINT8 yMin, UINT8 yHour,
     pt->sec   = 0;
     pt->min   = rtcDecToBCD(yMin);
     pt->hr    = rtcDecToBCD(yHour);
-    pt->day   = wwvGetWeekDay(nEndMonth, (UINT8)(wDD), (UINT16)yYears + 2000);
+    pt->day   = wwvGetWeekDay(nEndMonth, wDD, yYears + 2000);
     pt->date  = rtcDecToBCD((UINT8)wDD);
-    pt->month = rtcDecToBCD(nEndMonth);
+    pt->month = rtcDecToBCD((UINT8)nEndMonth);
     pt->year  = rtcDecToBCD(yYears);
 
 
 } /* End wwvMakeTimeStruct */
-
-
-
 
 
 
@@ -644,7 +641,7 @@ static UINT8 wwvGetAnyBit(void)
 
 
 /****************************************************************************
- * UINT8 wwvGetWeekDay(int nMonth, int nDate, int nYear)                    *
+ * UINT8 wwvGetWeekDay(UINT16 nMonth, UINT16 nDate, UINT16 nYear)                    *
  *                                                                          *
  * DESCRIPTION                                                              *
  * Returns the day of week for the given month and date.                    *
@@ -658,7 +655,7 @@ static UINT8 wwvGetAnyBit(void)
  * The day of week, 1-7, with 1=Monday.                                     *
  *                                                                          *
  ****************************************************************************/
-static UINT8 wwvGetWeekDay(int nMonth, int nDate, int nYear)
+static UINT8 wwvGetWeekDay(UINT16 nMonth, UINT16 nDate, UINT16 nYear)
 {
      int r;
      // Julian Calendar only
@@ -668,7 +665,7 @@ static UINT8 wwvGetWeekDay(int nMonth, int nDate, int nYear)
            nYear = nYear - 1;
      }
      r = (nDate + (2 * nMonth) + (6 * (nMonth + 1) / 10) + nYear + (nYear / 4) - (nYear / 100) + (nYear / 400)) % 7;
-     return r+1;
+     return (UINT8)(r+1);
 
 } /* End  wwvGetWeekDay */
 
@@ -678,7 +675,7 @@ static UINT8 wwvGetWeekDay(int nMonth, int nDate, int nYear)
 
 
 /****************************************************************************
- * void glcdMakeLastSyncString(UINT8 *pBuffer, UINT8 yMonth, UINT8 yDate,   *
+ * void glcdMakeLastSyncString(char *pBuffer, UINT8 yMonth, UINT8 yDate,   *
  *                              UINT8 yHour, UINT8 yMin)                    *
  *                                                                          *
  * DESCRIPTION                                                              *
@@ -696,7 +693,7 @@ static UINT8 wwvGetWeekDay(int nMonth, int nDate, int nYear)
  * none.                                                                    *
  *                                                                          *
  ****************************************************************************/
-static void glcdMakeLastSyncString(UINT8 *pBuffer, UINT8 yMonth, UINT8 yDate,
+static void glcdMakeLastSyncString(char *pBuffer, UINT8 yMonth, UINT8 yDate,
                                 UINT8 yHour, UINT8 yMin)
 {
     UINT8 yPos, yChar;

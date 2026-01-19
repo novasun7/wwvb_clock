@@ -46,7 +46,7 @@ extern void glcdClearScreen(void);
 extern void glcdSetPage(UINT8 yPage, UINT8 ySeg);
 extern void glcdSetCol(UINT8 yCol, UINT8 ySeg);
 extern void glcdMoveTo(UINT8 yX, UINT8 yY);
-extern void glcdWriteChar(UINT8 yChar);
+extern void glcdWriteChar(char yChar);
 extern void glcdWriteString(char * pString);
 extern void glcdDrawBitmap(UINT8 *pBMP, UINT8 yWidth, UINT8 yHeight);
 extern void glcdDrawImage(UINT8 yNum);

@@ -218,7 +218,7 @@ void glbaseWriteData(UINT8 yData, UINT8 yDFlag, UINT8 yCS)
 
     GLTRIS = PORT_OUTPUT;                           // data bus to outputs
     PIN_RW = 0;
-    PIN_RS = yDFlag;
+    PIN_RS = (__bit)yDFlag;
     glbaseEnableController(yCS);                    // enable controller
     GLWRITE = yData;                                // write the data
     PIN_E = 1;

@@ -198,7 +198,7 @@ void glcdMoveTo(UINT8 yX, UINT8 yY)
 
 
 /****************************************************************************
- * void glcdWriteChar(UINT8 yChar)                                          *
+ * void glcdWriteChar(char yChar)                                          *
  *                                                                          *
  * DESCRIPTION                                                              *
  * Write a font character to the display at the current position.           *
@@ -210,7 +210,7 @@ void glcdMoveTo(UINT8 yX, UINT8 yY)
  * none.                                                                    *
  *                                                                          *
  ****************************************************************************/
-void glcdWriteChar(UINT8 yChar)
+void glcdWriteChar(char yChar)
 {
     UINT16 i;
     char *pChar;
@@ -220,7 +220,7 @@ void glcdWriteChar(UINT8 yChar)
     // Write each of the 5 columns
     for(i = 0; i < 6; i++)
     {
-        pChar = ((UINT8 *)yFont6x8 + (6 * yChar) + i);
+        pChar = ((char *)yFont6x8 + (6 * yChar) + i);
         glbaseWriteData(*pChar, 1, s_yLastSeg);
         if(++s_yLastCol > 63)
         {

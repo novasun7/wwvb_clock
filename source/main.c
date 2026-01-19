@@ -105,7 +105,7 @@
 
 // Prototypes
 void DisplayTime(TIMESTRUCT *ptt, UINT8 yAll);
-void MakeDateString(TIMESTRUCT *ptt, UINT8 *pszBuffer);
+void MakeDateString(TIMESTRUCT *ptt, char *pszBuffer);
 void Vdelay_ms(UINT16 wDelay);
 void __interrupt() GlobalInt(void);
 void ButtonDown(void);
@@ -120,20 +120,20 @@ volatile UINT8 g_yTimedOut;                             // 1=time out occured
 
 
 // Constants
-const UINT8 cszDay[7][11] ={"Monday", "Tuesday", "Wednesday", "Thursday",
+const char cszDay[7][11] ={"Monday", "Tuesday", "Wednesday", "Thursday",
                             "Friday", "Saturday", "Sunday" };
 
-const UINT8 cszMonth[12][10] =  {"January", "February", "March", "April",
+const char cszMonth[12][10] =  {"January", "February", "March", "April",
                                 "May", "June", "July", "August",
                                 "September", "October", "November", "December" };
 
-const UINT8 cszTZChange[] = "Select Time Zone:";
-const UINT8 cszTimeZone[7][10] ={"Atlantic", "Eastern", "Central", "Mountain",
+const char cszTZChange[] = "Select Time Zone:";
+const char cszTimeZone[7][10] ={"Atlantic", "Eastern", "Central", "Mountain",
                             "Pacific", "Alaskan", "Hawaiian" };
-const UINT8 cszSet[] = "-> ";
-const UINT8 cszBlank[] = "   ";
-const UINT8 cszST[7][4] = {"AST","EST","CST","MST","PST","KST","HST"};
-const UINT8 cszDT[7][4] = {"ADT","EDT","CDT","MDT","PDT","KDT","HDT"};
+const char cszSet[] = "-> ";
+const char cszBlank[] = "   ";
+const char cszST[7][4] = {"AST","EST","CST","MST","PST","KST","HST"};
+const char cszDT[7][4] = {"ADT","EDT","CDT","MDT","PDT","KDT","HDT"};
 
 
 /****************************************************************************
@@ -194,7 +194,7 @@ void main()
         {
             // Time has changed- update display
             DisplayTime(&tt, 0);                // display it
-            memcpy(&g_ts, &tt, sizeof(TIMESTRUCT)); // update for next time
+            memcpy((void*)&g_ts, &tt, sizeof(TIMESTRUCT)); // update for next time
 
             // update wwvb sync up every 4 hours
             if(tt.sec == 0x01 && tt.min == 0x01)
@@ -212,7 +212,7 @@ void main()
                 PIN_TLED = 0;
                 glcdClearScreen();
                 DisplayTime(&tt, 1);            // update display (All)
-                memcpy(&g_ts, &tt, sizeof(TIMESTRUCT));
+                memcpy((void*)&g_ts, &tt, sizeof(TIMESTRUCT));
 
             }
         }
@@ -255,7 +255,7 @@ void DisplayTime(TIMESTRUCT *ptt, UINT8 yAll)
 {
     UINT8 yUpdateHr, yUpdateMin, yUpdateSec;
     UINT8 y, yHr, yPM, yTZ;
-    UINT8 sz[32];
+    char sz[32];
 
     // Determine what we need to update
     if(yAll)
@@ -329,9 +329,9 @@ void DisplayTime(TIMESTRUCT *ptt, UINT8 yAll)
         yTZ = yTZ - TZ_AT;
         glcdMoveTo(POS_ZONE_X, POS_ZONE_Y);         // position for Time Zone
         if(y)
-            glcdWriteString((UINT8*)&(cszDT[yTZ][0]));  // display DST
+            glcdWriteString((char*)&(cszDT[yTZ][0]));  // display DST
         else
-            glcdWriteString((UINT8*)&(cszST[yTZ][0]));  // display ST
+            glcdWriteString((char*)&(cszST[yTZ][0]));  // display ST
     }
 
 } /* End  DisplayTime */
@@ -342,7 +342,7 @@ void DisplayTime(TIMESTRUCT *ptt, UINT8 yAll)
 
 
 /****************************************************************************
- * void MakeDateString(TIMESTRUCT *ptt, UINT8 *pszBuffer)                   *
+ * void MakeDateString(TIMESTRUCT *ptt, char *pszBuffer)                   *
  *                                                                          *
  * DESCRIPTION                                                              *
  * Fills the passed buffer with a string containing the day of week, month, *
@@ -358,9 +358,9 @@ void DisplayTime(TIMESTRUCT *ptt, UINT8 yAll)
  * none.                                                                    *
  *                                                                          *
  ****************************************************************************/
-void MakeDateString(TIMESTRUCT *ptt, UINT8 *pszBuffer)
+void MakeDateString(TIMESTRUCT *ptt, char *pszBuffer)
 {
-    UINT8 sz[8];
+    char sz[8];
     UINT8 yPos, yChar;
     UINT16 wYear;
 
@@ -483,7 +483,7 @@ void ButtonDown()
     PIN_TLED = 0;
     glcdClearScreen();
     glcdMoveTo(0, 0);
-    glcdWriteString((UINT8*) cszTZChange);          // Time zone lead-in
+    glcdWriteString((char*) cszTZChange);          // Time zone lead-in
 
     yZone = rtcReadRam( RAM_R_TZONE);               // get current TZ setting
 
@@ -491,7 +491,7 @@ void ButtonDown()
     for(y = 0; y < 7; y++)
     {
         glcdMoveTo(19, y+1);                        // position for next
-        glcdWriteString((UINT8*)&(cszTimeZone[y][0])); // write this one
+        glcdWriteString((char*)&(cszTimeZone[y][0])); // write this one
     }
     while(SWITCH_DOWN)                              // wait for button release
         ;
@@ -556,9 +556,9 @@ void DrawTZSetting(UINT8 yTZ)
         glcdMoveTo(0, y+1);
 
         if(y == (yTZ - TZ_AT))
-            glcdWriteString((UINT8*) cszSet);       // draw screen pointer
+            glcdWriteString((char*) cszSet);       // draw screen pointer
         else
-            glcdWriteString((UINT8*) cszBlank);     // draw blank
+            glcdWriteString((char*) cszBlank);     // draw blank
     }
 
 } /* End DrawTZSetting */

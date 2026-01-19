@@ -255,7 +255,7 @@ UINT8 rtcBCDToDec(UINT8 yNum)
  ****************************************************************************/
 UINT8 rtcDecToBCD(UINT8 yNum)
 {
-    return ((yNum/(UINT8)10)<<(UINT8)4) + (yNum % (UINT8)10);
+    return (UINT8)((yNum/(UINT8)10)<<(UINT8)4) + (yNum % (UINT8)10);
 
 } /* End wwvDecToBCD */
 
