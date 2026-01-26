@@ -130,7 +130,7 @@ void wwvInit(void)
 UINT8 wwvGetTime(TIMESTRUCT *pt)
 {
     UINT8   y, yUpper, yLower;
-    UINT8   yMin, yHour, yDays1, yDays2, yYears1, yYears2, yLeap, yDST, yTZ;
+    UINT8   yMin, yHour, yDays1, yDays2, yYears1, yYears2, yLeap, yDST, yTZ, yrDec;
     UINT16  wDays;
     char    sz[16];
 
@@ -179,7 +179,7 @@ UINT8 wwvGetTime(TIMESTRUCT *pt)
         }
     }
     glcdWriteChar('S');
-
+    
     // Read in minutes frame
     if(!wwvRead8BitFrame(&yMin))            // get minutes byte
         return 0;
@@ -290,7 +290,8 @@ UINT8 wwvGetTime(TIMESTRUCT *pt)
     yUpper = (UINT8)(yYears1 << 4);         // move to msb
     yLower = yYears2  >> 4;
     y = rtcBCDToDec(yUpper | yLower);       // combine
-    yYears1 = rtcBCDToDec(y);
+    yrDec = y;
+    //yYears1 = rtcBCDToDec(y);
     yLeap = yYears2 & 0x04;                 // get Leap Year flag
         if(yLeap) yLeap = 1;
 
@@ -323,7 +324,7 @@ UINT8 wwvGetTime(TIMESTRUCT *pt)
     rtcWriteRam(RAM_W_DST, yDST);
 
     // Now convert this whole mess to a TIMESTRUCT
-    wwvMakeTimeStruct(pt, yMin, yHour, wDays, yYears1, yLeap, yDST, yTZ);
+    wwvMakeTimeStruct(pt, yMin, yHour, wDays, yrDec, yLeap, yDST, yTZ);
 
     rtcBumpLastSync();
     rtcSaveLastSync(pt, 0);                 // set new sync time
